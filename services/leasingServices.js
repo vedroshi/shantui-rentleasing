@@ -126,6 +126,52 @@ class LeasingService{
         })
         return transaction
     }
+
+    async leasingWarning(){
+        // Setup the last 7 days
+        const dueDate = new Date()
+        dueDate.setDate(dueDate.getDate() + 7)
+        
+        const transaction = await sequelize.transaction(async(t) =>{
+            try{
+                const warningLog = []
+                const leasings = await LeasingModel.findAll({
+                    where : {
+                        Payment_Due : dueDate
+                    },
+                    transaction : t
+                })
+
+                // Stop Transaction
+                if(leasings.length == 0){
+                    return []
+                }
+
+                if(leasings){
+                    for(const leasing of leasings){
+                        await axios.post(`${process.env.KARYAWANURL}/notif/create`, {
+                            Title : `Leasing - ${leasing.Name}`,
+                            Description : `${leasing.Info} Sudah Mau Jatuh Tempo`,
+                            IsRead : 0
+                        }).catch((err)=>{
+                            throw err
+                        })
+
+                        warningLog.push({
+                            ID : leasing.ID,
+                            message : "Payment date is nearly due",
+                            type : "Warning"
+                        })
+                    }
+                }
+                return warningLog
+            }catch(error){
+                t.rollback()
+                throw error
+            }
+            return transaction
+        })
+    }
 }
 
 module.exports = LeasingService

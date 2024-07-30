@@ -11,7 +11,11 @@ schedule.scheduleJob("0 0,9,17 * * *", async()=>{
         const leasingService = new LeasingService
     
         // Checking Expired Leasing and Rent
-        const [expiredRent, expiredLeasing] = await Promise.all([
+        const [warningRent, warningLeasing, expiredRent, expiredLeasing] = await Promise.all([
+            //Add Notification
+            rentService.rentWarning(),
+            leasingService.leasingWarning(),
+
             // Check and Update Expired Rent
             rentService.checkRentExpired(),
     
@@ -19,7 +23,7 @@ schedule.scheduleJob("0 0,9,17 * * *", async()=>{
             leasingService.checkLeasingExpired()
         ])
     
-        const paymentDueExpired = [...expiredRent, ...expiredLeasing]
+        const paymentDueExpired = [...warningRent, ...warningLeasing, ...expiredRent, ...expiredLeasing]
     
         console.log(paymentDueExpired)
         

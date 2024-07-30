@@ -131,6 +131,55 @@ class RentService{
         })
         return transaction
     }
+
+    async rentWarning(){
+        // Setup the last 7 days
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 7);
+
+        const transaction = await sequelize.transaction(async (t) =>{
+            try{
+                const warningLog = []
+
+                // Find rent that is due within 7 days 
+                const rents = await RentModel.findAll({
+                    where : {
+                        Payment_Due : dueDate
+                    },
+                    transaction : t
+                })
+
+                // If there is no rent found stop the transaction and return 0
+                if (rents.length == 0) {
+                    return []
+                }
+
+                if(rents){
+                    for (const rent of rents){
+                        // Add Notification
+                        await axios.post(`${process.env.KARYAWANURL}/notif/create`, {
+                            Title : `Sewa - ${rent.Name}`,
+                            Description : `${rent.Info} Sudah Mau Jatuh Tempo`,
+                            IsRead : 0
+                        }).catch((err)=>{
+                            throw err
+                        })
+
+                        warningLog.push({
+                            ID : rent.ID,
+                            message : "Payment date is nearly due",
+                            type : "Warning"
+                        })
+                    }
+                }
+                return warningLog
+            }catch(error){
+                t.rollback()
+                throw error
+            }
+        })
+        return transaction
+    }
 }
 
 module.exports = RentService
