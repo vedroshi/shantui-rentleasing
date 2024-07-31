@@ -4,7 +4,7 @@ const RentService = require('../services/rentServices')
 const LeasingService = require('../services/leasingServices')
 
 // Execute Everyday at 00:00, 09:00, and 17:00 
-schedule.scheduleJob("0 0,9,17 * * *", async()=>{
+schedule.scheduleJob("0 0,10,17 * * *", async()=>{
     try{
 
         const rentService = new RentService()

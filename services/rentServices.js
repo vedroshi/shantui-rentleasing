@@ -149,9 +149,9 @@ class RentService{
                     transaction : t
                 })
 
-                // If there is no rent found stop the transaction and return 0
+                // If there is no rent found stop the transaction and return []
                 if (rents.length == 0) {
-                    return []
+                    return warningLog
                 }
 
                 if(rents){
@@ -173,6 +173,7 @@ class RentService{
                     }
                 }
                 return warningLog
+
             }catch(error){
                 t.rollback()
                 throw error

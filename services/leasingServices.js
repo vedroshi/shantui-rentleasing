@@ -144,7 +144,7 @@ class LeasingService{
 
                 // Stop Transaction
                 if(leasings.length == 0){
-                    return []
+                    return warningLog
                 }
 
                 if(leasings){
@@ -164,13 +164,14 @@ class LeasingService{
                         })
                     }
                 }
+
                 return warningLog
             }catch(error){
                 t.rollback()
                 throw error
             }
-            return transaction
         })
+        return transaction
     }
 }
 

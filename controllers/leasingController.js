@@ -74,6 +74,19 @@ class LeasingController{
            next(err)
         })
     }
+
+    async warningLeasing(req, res, next){
+        const service = new leasingService()
+
+        await service.leasingWarning()
+        .then((response)=>{
+            res.status(200).json({
+                response
+            })
+        }).catch((error)=>{
+            next(error)
+        })
+    }
 }
 
 module.exports = LeasingController

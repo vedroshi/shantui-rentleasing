@@ -15,6 +15,8 @@ router.delete('/delete/:id', controller.deleteLeasing)
 
 router.patch('/check', controller.checkExpiredLeasing)
 
+router.get('/warning', controller.warningLeasing)
+
 router.use((err, req, res, next)=>{
     res.status(500).json({
         success : false,

@@ -75,6 +75,19 @@ class RentController{
             next(error)
         })
     }
+
+    async warningRent(req, res, next){
+        const service = new RentService()
+
+        await service.rentWarning()
+        .then((response)=>{
+            res.status(200).json({
+                response
+            })
+        }).catch((error)=>{
+            next(error)
+        })
+    }
 }
 
 module.exports = RentController

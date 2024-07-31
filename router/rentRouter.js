@@ -10,6 +10,7 @@ router.patch('/edit/:id', controller.editRent)
 router.delete('/delete/:id', controller.deleteRent)
 
 router.patch('/check', controller.checkRent)
+router.get('/warning', controller.warningRent)
 
 router.use((err, req, res, next) => {
     // console.error(err.stack);
